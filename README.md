@@ -15,7 +15,15 @@ I thought somebody else might find this useful, so I made it public. However, I 
 
 ## Example ##
 
-./vagrant-docker-setup.sh vagrant vagrant-example #Brings up the vagrant box in the folder vagrant-example and registers it with docker-machine under the name "vagrant"
-./vagrant-docker-destroy.sh vagrant vagrant-example #Removes the vagrant box named "vagrant" from docker-machine and then destroys the vagrant box in the folder vagrant-example.
+
+```
+#!bash
+
+#Brings up the vagrant box in the folder vagrant-example and registers it with docker-machine under the name "vagrant"
+./vagrant-docker-setup.sh vagrant vagrant-example
+#Removes the vagrant box named "vagrant" from docker-machine and then destroys the vagrant box in the folder vagrant-example.
+./vagrant-docker-destroy.sh vagrant vagrant-example
+```
+
 
 vagrant-docker-setup.sh also takes an optional third argument, which is the network adapter used to establish the machine's IP address (default eth1). See the .sh for more details.
