@@ -1,4 +1,4 @@
-# vagrant-docker-connector #
+# sws-vagrant-docker-connector #
 
 Shell scripts to bring up a vagrant box and connect docker-machine to it.
 
