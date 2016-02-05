@@ -8,6 +8,11 @@ Vagrant.configure(2) do |config|
 
   config.vm.network "private_network", type: "dhcp"
 
+  #We don't need to install Docker or configure it, as docker-machine does this
+  #when the VM is registered. However, on the assumption that the vagrant box
+  #will be provisioned less frequently than the docker-machine setup will be
+  #refreshed with vagrant-docker-setup.sh, pre-installing Docker and whatever
+  #images are required might be a timesaver.
   config.vm.provision "docker" do |d|
     d.pull_images "java:8"
   end
