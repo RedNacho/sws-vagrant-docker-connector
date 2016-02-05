@@ -3,7 +3,7 @@
 Shell scripts to bring up a vagrant box and connect docker-machine to it.
 
 * vagrant-docker-setup.sh: Brings up a vagrant box and registers it with docker-machine.
-* vagrant-docker-destroy.sh: Removes (without forcing) a vagrant box from docker-machine and then destroys it. (Do not use this if that isn't what you want!)
+* vagrant-docker-destroy.sh: Removes a vagrant box from docker-machine and then destroys it. Do not use this if that isn't what you want to happen!
 
 ## Rationale ##
 
@@ -27,3 +27,5 @@ I thought somebody else might find this useful, so I made it public. However, I 
 
 
 vagrant-docker-setup.sh also takes an optional third argument, which is the network adapter used to establish the machine's IP address (default eth1). See the .sh for more details.
+
+vagrant-docker-destroy.sh takes an optional third argument, -f, which is passed through to docker-machine rm and vagrant destroy so that the script will work without prompts.
