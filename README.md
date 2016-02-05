@@ -13,6 +13,13 @@ Recently I encountered a situation where the default docker-machine environment 
 
 I thought somebody else might find this useful, so I made it public. However, I haven't polished it.
 
+## Requirements ##
+
+* Vagrant
+* Docker
+* Docker-machine (pre-installed with Docker unless you're on Linux)
+* A vagrant box capable of running Docker (ie Linux) which is visible to the host by IP (not the case with the default networking options). See vagrant-example for a working example.
+
 ## Example ##
 
 
@@ -28,4 +35,4 @@ I thought somebody else might find this useful, so I made it public. However, I 
 
 vagrant-docker-setup.sh also takes an optional third argument, which is the network adapter used to establish the machine's IP address (default eth1). See the .sh for more details.
 
-vagrant-docker-destroy.sh takes an optional third argument, -f, which is passed through to docker-machine rm and vagrant destroy so that the script will work without prompts.
+vagrant-docker-destroy.sh takes an optional third argument, -f, which is passed through to docker-machine rm and vagrant destroy so that the script can be used without prompts.
