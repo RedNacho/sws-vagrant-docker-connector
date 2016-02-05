@@ -2,8 +2,8 @@
 
 Shell scripts to bring up a vagrant box and connect docker-machine to it.
 
-vagrant-docker-setup.sh: Brings up a vagrant box and registers it with docker-machine.
-vagrant-docker-destroy.sh: Removes (without forcing) a vagrant box from docker-machine and then destroys it. (Do not use this if that isn't what you want!)
+* vagrant-docker-setup.sh: Brings up a vagrant box and registers it with docker-machine.
+* vagrant-docker-destroy.sh: Removes (without forcing) a vagrant box from docker-machine and then destroys it. (Do not use this if that isn't what you want!)
 
 ## Rationale ##
 
