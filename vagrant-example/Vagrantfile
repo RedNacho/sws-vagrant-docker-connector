@@ -1,0 +1,14 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+#Sample vagrant box which uses Ubuntu 14.04.1, pre-installs docker
+#with a Java 8 image, and exposes itself for access via a private network.
+Vagrant.configure(2) do |config|
+  config.vm.box = "theforce/ubuntu-server-14.04.1-lts"
+
+  config.vm.network "private_network", type: "dhcp"
+
+  config.vm.provision "docker" do |d|
+    d.pull_images "java:8"
+  end
+end
