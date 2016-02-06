@@ -41,7 +41,7 @@ vagrant-docker-setup.sh also takes an optional third argument, which is used to 
 
 If unspecified, the default is "eth1", which is the network adapter vagrant sets up for private networking by default. So if you have set this option without making any advanced configuration, you should not need to specify a third argument, as shown in the example above.
 
-As far as I'm aware, you should not normally need to manually specify any configuration yourself, although feel free to hack the script to suit your needs.
+As far as I'm aware, you should not normally need to manually specify any other configuration yourself, although feel free to hack the script to suit your needs.
 
 ### Teardown ###
 
