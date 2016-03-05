@@ -20,13 +20,13 @@ vagrant up
 sshconfig=$(vagrant ssh-config)
 
 #Pull out the vagrant SSH key from the config
-vagrant_ssh_key=$(echo "${sshconfig}" | grep "^\s*IdentityFile\s" | sed -e "s/^\s*IdentityFile //")
+vagrant_ssh_key=$(echo "${sshconfig}" | grep "^\s*IdentityFile\s" | sed -e "s/^[[:blank:]]*IdentityFile //")
 
 #Pull out the vagrant user from the config
-vagrant_user=$(echo "${sshconfig}" | grep "^\s*User\s" | sed -e "s/^\s*User //")
+vagrant_user=$(echo "${sshconfig}" | grep "^\s*User\s" | sed -e "s/^[[:blank:]]*User //")
 
 #Strip out quote marks from SSH key path (otherwise it doesn't work...)
-vagrant_ssh_key=$(echo "${vagrant_ssh_key}" | sed -e "s/\"//g")
+vagrant_ssh_key=$(echo "${vagrant_ssh_key}" | sed -e "s/$(printf '"')//g")
 
 if [ "$3" == "--vagrant-ssh" ]
 then
@@ -35,8 +35,8 @@ then
 #may be the host IP and a forwarded port, in which case docker ports must
 #also be forwarded.
 
-vagrant_ip=$(echo "${sshconfig}" | grep "^\s*HostName\s" | sed -e "s/^\s*HostName //")
-vagrant_ssh_port=$(echo "${sshconfig}" | grep "^\s*Port\s" | sed -e "s/^\s*Port //")
+vagrant_ip=$(echo "${sshconfig}" | grep "^\s*HostName\s" | sed -e "s/^[[:blank:]]*HostName //")
+vagrant_ssh_port=$(echo "${sshconfig}" | grep "^\s*Port\s" | sed -e "s/^[[:blank:]]*Port //")
 
 else
 
@@ -49,7 +49,7 @@ else
 vagrant_direct_ssh=$(vagrant ssh -c "ip address show ${3:-eth1} | grep 'inet ' | sed -e 's/^.*inet /ip=/' -e 's/\/.*$//' && grep Port /etc/ssh/sshd_config | sed -e 's/Port /port=/'")
 
 #Get rid of spurious carriage returns...
-vagrant_direct_ssh=$(echo "${vagrant_direct_ssh}" | sed -e "s/\r//")
+vagrant_direct_ssh=$(echo "${vagrant_direct_ssh}" | sed -e "s/$(printf '\r')//")
 
 vagrant_ip=$(echo "${vagrant_direct_ssh}" | grep "^ip=" | sed -e "s/^ip=//")
 vagrant_ssh_port=$(echo "${vagrant_direct_ssh}" | grep "^port=" | sed -e "s/^port=//")
