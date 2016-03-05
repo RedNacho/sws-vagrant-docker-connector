@@ -11,7 +11,9 @@ Recently I encountered a situation where the default docker-machine environment 
 
 ## Disclaimer ##
 
-I thought somebody else might find this useful, so I made it public. However, I haven't polished it.
+I thought somebody else might find this useful, so I made it public. However, I haven't polished it, and make no guarantees about whether or not it will work out of the box in every case. It makes heavy use of grep and sed, which are not identical on every system, and there may be hidden text encoding issues (e.g. line endings) which I haven't encountered yet.
+
+I originally wrote it for git bash on Windows 10, and have tweaked it to work on my Ubuntu 14.04 laptop and my work Macbook (can't remember what OSX version).
 
 ## Requirements ##
 
