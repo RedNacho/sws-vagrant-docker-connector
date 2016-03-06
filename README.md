@@ -32,16 +32,22 @@ I originally wrote it for git bash on Windows 10, and have tweaked it to work on
 
 #Brings up the vagrant box in the folder vagrant-example and registers it with docker-machine under the name "vagrant"
 ./vagrant-docker-setup.sh vagrant vagrant-example
+
+#Brings up the vagrant box in the folder vagrant-example and registers it with docker-machine under the name "vagrant", extracting the IP address on the vagrant box's eth1 network adapter to communicate with the box.
+./vagrant-docker-setup.sh vagrant vagrant-example eth1
+
+#Brings up the vagrant box in the folder vagrant-example and registers it with docker-machine under the name "vagrant", using the IP specified in vagrant ssh-config to communicate with the box.
+./vagrant-docker-setup.sh vagrant vagrant-example --vagrant-ssh
 ```
 
 
-vagrant-docker-setup.sh also takes an optional third argument, which is used to configure how we get the IP address and port to use for communication with the box. There are two options here:
+vagrant-docker-setup.sh takes an optional third argument, which is used to configure how we get the IP address and port to use for communication with the box. There are two options here:
 
 1. Specify the name of a network adapter on the VM. The host will attempt to communicate directly with the VM on the IP for this adapter, and the SSH port for the machine. This requires that the VM is visible to the host machine, e.g. on a private network.
 
 2. Specify "--vagrant-ssh". The host will attempt to communicate with the VM via the IP and the port specified in vagrant's SSH config. With a default vagrant setup this is the host machine, so the vagrant box must forward appropriate docker ports (e.g. 2376) to the host, because docker-machine will not be able to communicate directly with the VM. I do not recommend this approach unless there is a good reason not to expose the vagrant box to the host on a private network, because it ties up the docker ports for the entire machine (so you can't expose a docker instance on the host, or run a second vagrant box with the same network config).
 
-If unspecified, the default is "eth1", which is the adapter that vagrant sets up by default for private networking. So if you have set the private network option in the Vagrantfile without making any advanced configuration, you should not need to specify a third argument, as shown in the example above.
+If unspecified, the default is "eth1", which is the adapter that vagrant sets up by default for private networking. So if you have set the private network option in the Vagrantfile without making any advanced configuration, you should not need to specify a third argument, as shown in the first example above.
 
 As far as I'm aware, you should not normally need to manually specify any other configuration yourself, although feel free to hack the script to suit your needs.
 
