@@ -7,7 +7,9 @@ Shell scripts to bring up a vagrant box and connect docker-machine to it.
 
 ## Rationale ##
 
-Recently I encountered a situation where the default docker-machine environment was not quite correct for me (some kernel bug, I can't remember). So I brought up my own VM with Vagrant and connected it to the docker-machine with the generic driver. Then I realised that it was possible to script everything that I'd just done, so I did.
+Recently I encountered a situation where the default docker-machine environment was not quite correct for me (some kernel bug, I can't remember). So I brought up my own VM with Vagrant and connected it to the docker-machine with the generic driver. This allowed me to run docker commands as if they were local, but with docker actually running inside an arbitrary vagrant box which I'd just created. Then I realised that it was possible to script everything that I'd just done, so I did.
+
+It's more or less the approach [here](http://blog.scottlowe.org/2015/08/04/using-vagrant-docker-machine-together/) and [here](http://blog.wescale.fr/2015/11/24/docker-machine-et-vagrant/), except that I've scripted it. It would make sense to implement this logic as a driver for docker-machine, but I don't know enough about this subject to make the attempt myself.
 
 ## Disclaimer ##
 
