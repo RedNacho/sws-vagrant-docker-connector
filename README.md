@@ -79,8 +79,9 @@ eval $(docker-machine env vagrant)
 #docker build...
 #docker run...
 
-#To ensure the configuration is up-to-date (e.g. if you've restarted and the box IP might be different), just rerun the setup script.
+#To ensure the configuration is up-to-date (e.g. if you've restarted and the box IP might be different), just rerun the setup script and reload the docker-machine environment.
 ./vagrant-docker-setup.sh vagrant vagrant-example
+eval $(docker-machine env vagrant)
 
 #Destroy the vagrant box if you don't need it anymore.
 ./vagrant-docker-destroy.sh vagrant vagrant-example
