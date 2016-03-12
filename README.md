@@ -83,7 +83,7 @@ eval $(docker-machine env vagrant)
 ./vagrant-docker-setup.sh vagrant vagrant-example
 eval $(docker-machine env vagrant)
 
-#Destroy the vagrant box if you don't need it anymore.
+#Deregister the vagrant box and destroy it if you don't need it anymore.
 ./vagrant-docker-destroy.sh vagrant vagrant-example
 
 ```
