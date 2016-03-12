@@ -63,3 +63,26 @@ As far as I'm aware, you should not normally need to manually specify any other 
 
 
 vagrant-docker-destroy.sh takes an optional third argument, -f, which is passed through to docker-machine rm and vagrant destroy so that the script can be used without prompts.
+
+### Step-by-step
+
+```
+#!bash
+
+#Bring up the vagrant box in vagrant-example and register it with docker-machine under the name vagrant.
+./vagrant-docker-setup.sh vagrant vagrant-example
+
+#Load the environment into the current shell
+eval $(docker-machine env vagrant)
+
+#Do something with docker, which is now connected to the vagrant-example box...
+#docker build...
+#docker run...
+
+#To ensure the configuration is up-to-date (e.g. if you've restarted and the box IP might be different), just rerun the setup script.
+./vagrant-docker-setup.sh vagrant vagrant-example
+
+#Destroy the vagrant box if you don't need it anymore.
+./vagrant-docker-destroy.sh vagrant vagrant-example
+
+```
