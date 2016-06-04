@@ -46,7 +46,7 @@ else
 #forwarded from the vagrant box, as we can only do this for one docker host
 #at a time.)
 
-vagrant_direct_ssh=$(vagrant ssh -c "ip address show ${3:-eth1} | grep 'inet ' | sed -e 's/^.*inet /ip=/' -e 's/\/.*$//' && grep Port /etc/ssh/sshd_config | sed -e 's/Port /port=/'")
+vagrant_direct_ssh=$(vagrant ssh -c "sudo ip address show ${3:-eth1} | grep 'inet ' | sed -e 's/^.*inet /ip=/' -e 's/\/.*$//' && sudo grep Port /etc/ssh/sshd_config | sed -e 's/Port /port=/'")
 
 #Get rid of spurious carriage returns...
 vagrant_direct_ssh=$(echo "${vagrant_direct_ssh}" | sed -e "s/$(printf '\r')//")
@@ -55,6 +55,12 @@ vagrant_ip=$(echo "${vagrant_direct_ssh}" | grep "^ip=" | sed -e "s/^ip=//")
 vagrant_ssh_port=$(echo "${vagrant_direct_ssh}" | grep "^port=" | sed -e "s/^port=//")
 
 fi
+
+echo vagrant-docker-setup will use the following settings to create the docker-machine:
+echo IP: ${vagrant_ip}
+echo SSH key: ${vagrant_ssh_key}
+echo User: ${vagrant_user}
+echo Port: ${vagrant_ssh_port}
 
 #Remove existing docker-machine
 docker-machine rm -f "$1"
