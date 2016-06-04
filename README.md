@@ -51,6 +51,8 @@ vagrant-docker-setup.sh takes an optional third argument, which is used to confi
 
 If unspecified, the default is "eth1", which is the adapter that vagrant sets up by default for private networking. So if you have set the private network option in the Vagrantfile without making any advanced configuration, you should not need to specify a third argument, as shown in the first example above.
 
+(Edit: Since I wrote the script and this readme, docker-machine has since been modified so that Docker can be accessed on a port other than 2376. This makes the --vagrant-ssh mode somewhat more defensible, because it's now possible to expose multiple docker daemons by forwarding different ports to the host. I have added an additional argument which allows the port to be specified. This is described in the comments in the script, and I will update the readme when I have time.)
+
 As far as I'm aware, you should not normally need to manually specify any other configuration yourself, although feel free to hack the script to suit your needs.
 
 ### Teardown ###
