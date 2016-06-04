@@ -21,7 +21,8 @@
 #   that docker is exposed on when it is configured on the VM. So you can cannot
 #   currently start docker on port 2376, forward this port to port XXXX, and
 #   then tell docker-machine to use port XXXX - the port number on the VM and
-#   the host must match.
+#   the host must match. Set this to --default-docker-port to use the default
+#   and move on to more arguments.
 # - (Optional) Any further arguments will be passed to docker-machine.
 
 #Change to the vagrant directory
