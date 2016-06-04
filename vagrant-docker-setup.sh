@@ -8,7 +8,21 @@
 #   that this is possible, e.g. with a private network). If omitted, eth1.
 #   Set this to --vagrant-ssh to rely on the vagrant ssh config for the IP
 #   address and SSH port instead (this may require docker ports to be forwarded
-#   to the host IP).
+#   to the host IP). Set this to --direct-ssh to use the default and move on to
+#   more arguments.
+# - (Optional) The port to use to connect to the Docker daemon. This may depend
+#   on the way that SSH communication is established with the vagrant box. By
+#   default, this will be the port directly on the box, with no forwarding to
+#   the host required. If --vagrant-ssh has been specified, this may require the
+#   port to be forwarded to the host, depending on the vagrant SSH config. NB
+#   This parameter requires docker-machine's --generic-engine-port arg, which
+#   may not exist on older versions. It also appears that this arg has the dual
+#   effect of both specifying the communication port with docker, AND the port
+#   that docker is exposed on when it is configured on the VM. So you can cannot
+#   currently start docker on port 2376, forward this port to port XXXX, and
+#   then tell docker-machine to use port XXXX - the port number on the VM and
+#   the host must match.
+# - (Optional) Any further arguments will be passed to docker-machine.
 
 #Change to the vagrant directory
 cd "$2"
@@ -28,6 +42,13 @@ vagrant_user=$(echo "${sshconfig}" | grep "^\s*User\s" | sed -e "s/^[[:blank:]]*
 #Strip out quote marks from SSH key path (otherwise it doesn't work...)
 vagrant_ssh_key=$(echo "${vagrant_ssh_key}" | sed -e "s/$(printf '"')//g")
 
+vagrant_docker_port=${4:-"--default-docker-port"}
+
+if [ $vagrant_docker_port == "--default-docker-port" ]
+then
+  unset vagrant_docker_port
+fi
+
 if [ "$3" == "--vagrant-ssh" ]
 then
 
@@ -46,7 +67,14 @@ else
 #forwarded from the vagrant box, as we can only do this for one docker host
 #at a time.)
 
-vagrant_direct_ssh=$(vagrant ssh -c "sudo ip address show ${3:-eth1} | grep 'inet ' | sed -e 's/^.*inet /ip=/' -e 's/\/.*$//' && sudo grep Port /etc/ssh/sshd_config | sed -e 's/Port /port=/'")
+vagrant_network_adapter=${3:-"--direct-ssh"}
+
+if [ $vagrant_network_adapter == "--direct-ssh" ]
+then
+  unset vagrant_network_adapter
+fi
+
+vagrant_direct_ssh=$(vagrant ssh -c "sudo ip address show ${vagrant_network_adapter:-eth1} | grep 'inet ' | sed -e 's/^.*inet /ip=/' -e 's/\/.*$//' && sudo grep Port /etc/ssh/sshd_config | sed -e 's/Port /port=/'")
 
 #Get rid of spurious carriage returns...
 vagrant_direct_ssh=$(echo "${vagrant_direct_ssh}" | sed -e "s/$(printf '\r')//")
@@ -56,17 +84,26 @@ vagrant_ssh_port=$(echo "${vagrant_direct_ssh}" | grep "^port=" | sed -e "s/^por
 
 fi
 
+if [ "$#" -gt 4 ]
+then
+  docker_machine_additional_parameters="${@:5}"
+fi
+
 echo vagrant-docker-setup will use the following settings to create the docker-machine:
 echo IP: ${vagrant_ip}
 echo SSH key: ${vagrant_ssh_key}
-echo User: ${vagrant_user}
-echo Port: ${vagrant_ssh_port}
+echo SSH user: ${vagrant_user}
+echo SSH port: ${vagrant_ssh_port}
+echo Docker port: ${vagrant_docker_port}
+echo Additional arguments: ${docker_machine_additional_parameters}
 
 #Remove existing docker-machine
 docker-machine rm -f "$1"
 
+docker_machine_optional_parameters=${vagrant_docker_port+"--generic-engine-port "}${vagrant_docker_port}${vagrant_docker_port+" "}${docker_machine_additional_parameters}${docker_machine_additional_parameters+" "}
+
 #Add the vagrant box to docker-machine
-docker-machine create -d generic --generic-ip-address "${vagrant_ip}" --generic-ssh-key "${vagrant_ssh_key}" --generic-ssh-user ${vagrant_user} --generic-ssh-port ${vagrant_ssh_port} "$1"
+docker-machine create -d generic --generic-ip-address "${vagrant_ip}" --generic-ssh-key "${vagrant_ssh_key}" --generic-ssh-user ${vagrant_user} --generic-ssh-port ${vagrant_ssh_port} ${docker_machine_optional_parameters}"${1}"
 
 #Print the environment
 docker-machine env "$1"
