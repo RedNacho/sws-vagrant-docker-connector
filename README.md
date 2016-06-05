@@ -73,10 +73,10 @@ Normally, you will do one of two things:
 ```
 #!bash
 
-#Option 1, with direct SSH
+#Option 1, with direct SSH, and this in the Vagrantfile: config.vm.network "private_network", type: "dhcp"
 ./vagrant-docker-setup.sh ${DOCKER_MACHINE_NAME} ${VAGRANT_PATH} [${NETWORK_ADAPTER}]
 
-#Option 2, with vagrant SSH
+#Option 2, with vagrant SSH, and this in the Vagrantfile: config.vm.network "forwarded_port", guest: ${DOCKER_PORT}, host: ${DOCKER_PORT}
 ./vagrant-docker-setup.sh ${DOCKER_MACHINE_NAME} ${VAGRANT_PATH} --vagrant-ssh [${DOCKER_PORT}]
 
 ```
