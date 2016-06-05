@@ -43,15 +43,43 @@ I originally wrote it for git bash on Windows 10, and have tweaked it to work on
 ```
 
 
-vagrant-docker-setup.sh takes an optional third argument, which is used to configure how we get the IP address and port to use for communication with the box. There are two options here:
+Here is the general format for the parameters (they currently need to be in the correct positions - apologies, I will work on this when I have time):
 
-1. Specify the name of a network adapter on the VM. The host will attempt to communicate directly with the VM on the IP for this adapter, and the SSH port for the machine. This requires that the VM is visible to the host machine, e.g. on a private network.
 
-2. Specify "--vagrant-ssh". The host will attempt to communicate with the VM via the IP and the port specified in vagrant's SSH config. With a default vagrant setup this is the host machine, so the vagrant box must forward appropriate docker ports (e.g. 2376) to the host, because docker-machine will not be able to communicate directly with the VM. I do not recommend this approach unless there is a good reason not to expose the vagrant box to the host on a private network, because it ties up the docker ports for the entire machine (so you can't expose a docker instance on the host, or run a second vagrant box with the same network config).
+```
+#!bash
 
-If unspecified, the default is "eth1", which is the adapter that vagrant sets up by default for private networking. So if you have set the private network option in the Vagrantfile without making any advanced configuration, you should not need to specify a third argument, as shown in the first example above.
+./vagrant-docker-setup.sh ${DOCKER_MACHINE_NAME} ${VAGRANT_PATH} [${SSH_CONFIG_SOURCE} [${DOCKER_PORT} [${OTHER_DOCKER_MACHINE_ARGS}]]]
 
-(Edit: Since I wrote the script and this readme, docker-machine has been modified so that Docker can be accessed on a port other than 2376. This makes the --vagrant-ssh mode somewhat more defensible, because it's now possible to expose multiple docker daemons by forwarding different ports to the host. I have added an additional argument which allows the port to be specified. This is described in the comments in the script, and I will update the readme when I have time.)
+```
+
+
+**DOCKER_MACHINE_NAME**: The name to give the vagrant box in docker-machine
+
+**VAGRANT_PATH**: The path to the vagrant box
+
+**SSH_CONFIG_SOURCE** (optional): Either (a) the network adapter on the vagrant box to use to extract an IP which is accessible from the host, or (b) "--vagrant-ssh". If omitted, this will default to "eth1" (which is the default adapter that vagrant sets up for private networking). The special "--vagrant-ssh" setting does not try to access the box directly, and instead uses the vagrant SSH config, which is usually a forwarded port on the host machine. **To use the default value for this parameter and enter more arguments, enter "--direct-ssh".**
+
+**DOCKER_PORT** (optional): The port on which to try to connect to Docker. There are several unfortunate complexities here. Firstly, if "--vagrant-ssh" was specified, and the vagrant SSH config uses port forwarding from the host, this must be a port on the host which is forwarded to Docker on the vagrant. If a direct SSH connection is used, the port does not need to be forwarded. The second thing to be aware of is that this uses the new (at the time of writing) "--generic-engine-port" parameter in docker-machine to change the port from the default value of 2376, and will not work with outdated versions of docker-machine. The final thing is that this new docker-machine parameter does not only tell docker-machine how to communicate with docker, but also how to start docker on the box. This means that if you are relying on port forwarding, the port on the host (which is used to connect to Docker) must be forwarded to the same port on the vagrant box (which is where the Docker daemon will be listening). **To use the default value for this parameter and enter more arguments, enter "--default-docker-port".**
+
+**OTHER_DOCKER_MACHINE_ARGS** (optional): All other arguments are passed to docker-machine.
+
+Normally, you will do one of two things:
+
+1. Set the vagrant box up on a private network, and use the direct SSH method. In this case, you should not need to specify any of the optional arguments. You may have problems if the network adapter for the private network is something other than eth1. If that happens, go on to the vagrant box, find the network adapter you should be using, and specify that as the SSH_CONFIG_SOURCE parameter. **This is the best option unless you have some reason not to expose your vagrant box to your host on a private network.**
+
+2. Set the vagrant box up to forward the Docker daemon port to the host, and use the vagrant SSH method by passing "--vagrant-ssh" as the SSH_CONFIG_SOURCE. By default, the Docker port will be 2376, although you can override it with the DOCKER_PORT parameter if your version of docker-machine supports this (see above for details). The port must be forwarded unchanged, e.g. 2376:2376. If your version of docker-machine does not support the --generic-engine-port parameter, you must always use port 2376, which means that you can only run one docker-machine at a time this way on the host. **This is the best option if you do not want to expose your vagrant box to your host on a private network, and instead want to provide access through port forwarding.**
+
+```
+#!bash
+
+#Option 1, with direct SSH
+./vagrant-docker-setup.sh ${DOCKER_MACHINE_NAME} ${VAGRANT_PATH} [${NETWORK_ADAPTER}]
+
+#Option 2, with vagrant SSH
+./vagrant-docker-setup.sh ${DOCKER_MACHINE_NAME} ${VAGRANT_PATH} --vagrant-ssh [${DOCKER_PORT}]
+
+```
 
 As far as I'm aware, you should not normally need to manually specify any other configuration yourself, although feel free to hack the script to suit your needs.
 
